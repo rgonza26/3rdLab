@@ -26,7 +26,7 @@ static BOOLEAN is_reserved_word(???);
 
 typedef enum
 {
-    LETTER, DIGIT, QUOTE, SPECIAL, EOF_CODE,
+    LETTER, DIGIT, QUOTE, SPECIAL, EOF_CODE, UNUSED
 }
 CharCode;
 
@@ -59,6 +59,7 @@ const RwStruct rw_table[9][10] = {
 
 void init_scanner(FILE *source_file, char source_name[], char date[])
 {
+	int asciiChar;
     src_file = source_file;
     strcpy(src_name, source_name);
     strcpy(todays_date, date);
@@ -68,7 +69,47 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
      we are looking at by setting our array up to be a copy the ascii table.  Since C thinks of 
      a char as like an int you can use ch in get_token as an index into the table.
      *******************/
-    
+	/*0,      1,     2,     3,       4,		   5		*/
+    /*LETTER, DIGIT, QUOTE, SPECIAL, EOF_CODE, UNUSED	*/
+
+
+	/*	Initialize array to UNUSED	*/
+	for(asciiChar = 0; asciiChar <= 255; asciiChar++){
+		char_table[asciiChar] = UNUSED;
+	}
+
+	/* [48, 57]	= DIGIT	*/
+	for(asciiChar = 48; asciiChar<=57; asciiChar++){
+		char_table[asciiChar] = DIGIT;
+	}
+
+	/* [65, 90] = LETTER */
+	for(asciiChar = 65; asciiChar <= 90; asciiChar++){
+		char_table[asciiChar] = LETTER;
+	}
+
+    /* [97, 122] = LETTER */
+	for(asciiChar = 97; asciiChar <= 122; asciiChar++){
+		char_table[asciiChar] = LETTER;
+	}
+	
+	/*	SPECIAL CHARACTERS:
+	^ * ( ) - + = [ ] : ; < > , . / := <= >= <> ..				
+	*/
+	for(asciiChar = 40; asciiChar <= 47; asciiChar++){
+		char_table[asciiChar] = SPECIAL;
+	}
+	for(asciiChar = 58; asciiChar <= 62; asciiChar++){
+		char_table[asciiChar] = SPECIAL;
+	}
+	for(asciiChar = 91; asciiChar <= 94; asciiChar++){
+		char_table[asciiChar] = SPECIAL;
+	}
+
+	/* QUOTES */
+	char_table[34] = QUOTE;
+	char_table[39] = QUOTE;
+	char_table[96] = QUOTE;
 }
 BOOLEAN get_source_line(char source_buffer[])
 {

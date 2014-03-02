@@ -53,6 +53,18 @@ typedef enum
 }
 LiteralType;
 
+/*////////////////////////////////////////////*/
+/* 
+	INSERT: This is a union to store a literal value.  Can store 
+	an int, double, or a pointer to a string
+*/
+typedef union LiteralValue{
+	int valInt;
+	double valDouble;
+	char* valString;
+};
+/*////////////////////////////////////////////*/
+
 /**************
  this is a valid Pascal token.  A token must have a literal type,
  a literal value, and a token code.  It also must have a link to 
@@ -60,7 +72,10 @@ LiteralType;
  ***************/
 typedef struct
 {
-    /*Missing code goes here*/
+	/* FILL THIS IN */
+    LiteralType literalType;
+	LiteralValue literalValue;
+	TokenCode tokenCode;
 }
 Token;
 
