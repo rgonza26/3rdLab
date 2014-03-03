@@ -14,6 +14,8 @@
 #include <string.h>
 #include <time.h>
 
+#include <stdlib.h>
+
 #define FORM_FEED_CHAR          '\f'
 #define MAX_FILE_NAME_LENGTH    32
 #define MAX_SOURCE_LINE_LENGTH  256
@@ -53,17 +55,17 @@ typedef enum
 }
 LiteralType;
 
-/*////////////////////////////////////////////*/
-/* 
-	INSERT: This is a union to store a literal value.  Can store 
-	an int, double, or a pointer to a string
-*/
+/*****************************
+ Literal Value
+ *****************************/
+/*	INSERT: This is a union to store a literal value.  Can store 
+	an int, double, or a pointer to a string	*/
 typedef union LiteralValue{
 	int valInt;
 	double valDouble;
 	char* valString;
 };
-/*////////////////////////////////////////////*/
+
 
 /**************
  this is a valid Pascal token.  A token must have a literal type,

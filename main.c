@@ -41,6 +41,30 @@ void add_token_to_list(Token *list, Token *new_token)
 void quit_scanner(FILE *src_file, Token *list)
 {
     /*write code to free all of the memory for the token list */
+	Token* ptr_lead;
+	Token* ptr_trail;
+
+	/* If list is empty */
+	if(list == NULL){
+		return;
+	/* If list is size 1 */
+	}else if(list->next == NULL){
+		free(list);
+		return;
+	}
+
+	/* If list is size >1 */
+	ptr_lead = list->next;
+	ptr_trail = ptr_lead;
+
+	/* then iterate through and delete ptr_trail each time */
+	while(ptr_lead != NULL){
+		free(ptr_trail);
+		ptr_trail = ptr_lead;
+		ptr_lead = ptr_lead->next;
+	}
+	/* then finally delete last node in LinkedList */
+	free(ptr_trail);
 
     fclose(src_file);
 }

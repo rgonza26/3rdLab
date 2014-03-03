@@ -16,7 +16,7 @@
  ******************/
 static ??? get_char(???);
 static char* skip_comment(char* str);
-static ??? skip_blanks(???);
+static char* skip_blanks(char* str);
 static ??? get_word(???);
 static ??? get_number(???);
 static ??? get_string(???);
@@ -111,6 +111,7 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 	char_table[39] = QUOTE;
 	char_table[96] = QUOTE;
 }
+
 BOOLEAN get_source_line(char source_buffer[])
 {
     char print_buffer[MAX_SOURCE_LINE_LENGTH + 9];
@@ -129,19 +130,22 @@ BOOLEAN get_source_line(char source_buffer[])
         return (FALSE);
     }
 }
+
 Token* get_token()
 {
     char ch; /*This can be the current character you are examining during scanning. */
     char token_string[MAX_TOKEN_STRING_LENGTH]; /*Store your token here as you build it. */
-    char *token_ptr = ???; /*write some code to point this to the beginning of token_string */
-    ???;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
+    char *token_ptr = token_string; /*write some code to point this to the beginning of token_string */
+    Token token;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
     
     /*1.  Skip past all of the blanks
+
     //2.  figure out which case you are dealing with LETTER, DIGIT, QUOTE, EOF, or special, by examining ch
     //3.  Call the appropriate function to deal with the cases in 2. */
     
     return ???; /*What should be returned here? */
 }
+
 static ??? get_char(???)
 {
     /*
@@ -154,6 +158,7 @@ static ??? get_char(???)
      Write some code to set the character ch to the next character in the buffer
      */
 }
+
 static char* skip_blanks(char* str)
 {
     /*
@@ -166,6 +171,7 @@ static char* skip_blanks(char* str)
 	}
 	return ptr;
 }
+
 static char* skip_comment(char* str)
 {
     /*
@@ -186,6 +192,7 @@ static char* skip_comment(char* str)
 
 	return ptr;
 }
+
 static ??? get_word(???)
 {
     /*
@@ -199,18 +206,21 @@ static ??? get_word(???)
      if it is not a reserved word its an identifier.
      */
 }
+
 static ??? get_number(???)
 {
     /*
      Write some code to Extract the number and convert it to a literal number.
      */
 }
+
 static ??? get_string(???)
 {
     /*
      Write some code to Extract the string
      */
 }
+
 static ??? get_special(???)
 {
     /*
@@ -218,6 +228,7 @@ static ??? get_special(???)
      some are double-character.  Set the token appropriately.
      */
 }
+
 static void downshift_word(char* str)
 {
 	/* This function takes a pointer to a string, and manipulates THAT string
@@ -238,6 +249,7 @@ static void downshift_word(char* str)
 		ptr++; 
 	}
 }
+
 static BOOLEAN is_reserved_word(???)
 {
     /*

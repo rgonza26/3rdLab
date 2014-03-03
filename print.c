@@ -57,7 +57,13 @@ static void print_page_header(char source_name[], char date[])
     printf("Page    %d  %s  %s\n\n", ++page_number, source_name, date);
 }
 void print_token(Token *token)
-{
+{    
+	/*
+	Token =
+		LiteralType literalType;
+		LiteralValue literalValue;
+		TokenCode tokenCode;
+		Token next;
+	*/
     /*Missing code goes here */
-    
 }
