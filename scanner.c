@@ -21,7 +21,7 @@ static ??? get_word(???);
 static ??? get_number(???);
 static ??? get_string(???);
 static ??? get_special(???);
-static ??? downshift_word(???);
+static void downshift_word(char* str);
 static BOOLEAN is_reserved_word(???);
 
 typedef enum
@@ -201,11 +201,25 @@ static ??? get_special(???)
      some are double-character.  Set the token appropriately.
      */
 }
-static ??? downshift_word(???)
+static void downshift_word(char* str)
 {
-    /*
-     Make all of the characters in the incoming word lower case.
-     */
+	/* This function takes a pointer to a string, and manipulates THAT string
+		to make all characters lowercase.  Void return	*/
+
+	/* LOCAL DECLARATIONS */
+	char* ptr = str;
+	/* Adding shamt=32 to a an uppercase char makes it lowercase */
+	int shamt = 32;
+
+	/* FUNC BODY */
+	/* Iterate until null character '\0' found */
+	while(*ptr!='\0'){
+		/* If character is an uppercase letter, make it lowercase by adding shamt */
+		if(*ptr >= 65 && *ptr <= 90){
+			*ptr = *ptr + shamt;
+		}
+		ptr++; 
+	}
 }
 static BOOLEAN is_reserved_word(???)
 {
