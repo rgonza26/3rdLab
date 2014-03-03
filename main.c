@@ -34,10 +34,13 @@ int main(int argc, const char * argv[])
     quit_scanner(source_file, token_list);
     return 0;
 }
+
 void add_token_to_list(Token *list, Token *new_token)
 {
     /*Add new_token to the list knowing that list is a linked list. */
+	list->next = new_token;
 }
+
 void quit_scanner(FILE *src_file, Token *list)
 {
     /*write code to free all of the memory for the token list */
@@ -68,6 +71,7 @@ void quit_scanner(FILE *src_file, Token *list)
 
     fclose(src_file);
 }
+
 FILE *init_lister(const char *name, char source_file_name[], char dte[])
 {
     time_t timer;

@@ -49,6 +49,7 @@ void print_line(char line[], char source_name_to_print[], char date_to_print[])
         *save_chp = save_ch;
     }
 }
+
 static void print_page_header(char source_name[], char date[])
 {
     static int page_number = 0;
@@ -56,6 +57,7 @@ static void print_page_header(char source_name[], char date[])
     putchar(FORM_FEED_CHAR);
     printf("Page    %d  %s  %s\n\n", ++page_number, source_name, date);
 }
+
 void print_token(Token *token)
 {    
 	/*
