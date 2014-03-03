@@ -154,13 +154,17 @@ static ??? get_char(???)
      Write some code to set the character ch to the next character in the buffer
      */
 }
-static ??? skip_blanks(???)
+static char* skip_blanks(char* str)
 {
     /*
      Write some code to skip past the blanks in the program and return a pointer
      to the first non blank character
      */
-    
+	char* ptr = str;
+	while(*ptr == ' '){
+		ptr++;
+	}
+	return ptr;
 }
 static char* skip_comment(char* str)
 {
@@ -168,11 +172,18 @@ static char* skip_comment(char* str)
      Write some code to skip past the comments in the program and return a pointer
      to the first non blank character.  Watch out for the EOF character.
      */
-
 	char* ptr = str;
-	while(*ptr == ' '){
-		ptr++;
-	}
+	do{
+		ptr = skip_blanks(ptr);
+		if(*str == '{'){
+			while(*str != '}'){
+				ptr++;
+			}
+			ptr++;
+		}
+		skip_blanks(ptr);
+	}while(*ptr == '{' || *ptr == ' ');
+
 	return ptr;
 }
 static ??? get_word(???)

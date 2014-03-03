@@ -76,6 +76,7 @@ typedef struct
     LiteralType literalType;
 	LiteralValue literalValue;
 	TokenCode tokenCode;
+	Token next;
 }
 Token;
 
