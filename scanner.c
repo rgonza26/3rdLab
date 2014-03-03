@@ -15,7 +15,7 @@
  return types for functions with ???.
  ******************/
 static ??? get_char(???);
-static ??? skip_comment(???);
+static char* skip_comment(char* str);
 static ??? skip_blanks(???);
 static ??? get_word(???);
 static ??? get_number(???);
@@ -162,12 +162,18 @@ static ??? skip_blanks(???)
      */
     
 }
-static ??? skip_comment(???)
+static char* skip_comment(char* str)
 {
     /*
      Write some code to skip past the comments in the program and return a pointer
      to the first non blank character.  Watch out for the EOF character.
      */
+
+	char* ptr = str;
+	while(*ptr == ' '){
+		ptr++;
+	}
+	return ptr;
 }
 static ??? get_word(???)
 {
