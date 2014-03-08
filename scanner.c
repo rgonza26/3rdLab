@@ -14,7 +14,7 @@
  You need to design the proper parameter list and 
  return types for functions with ???.
  ******************/
-static ??? get_char(???);
+static char get_char();
 static char* skip_comment(char* str);
 static char* skip_blanks(char* str);
 static ??? get_word(???);
@@ -146,8 +146,21 @@ Token* get_token()
     return ???; /*What should be returned here? */
 }
 
-static ??? get_char(???)
+static char get_char()// still testing...
 {
+    char ch = EOF_CHAR;
+    
+ 	if (get_source_line[line_number] == '\n' ||
+        line_number >= MAX_SOURCE_LINE_LENGTH) {
+        
+ 		ch = '\0';
+	}
+    
+	else
+		ch = get_source_line[line_number];
+    
+	line_number++;
+	return ch;	
     /*
      If at the end of the current line (how do you check for that?),
      we should call get source line.  If at the EOF (end of file) we should
