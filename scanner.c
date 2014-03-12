@@ -7,6 +7,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 #include "scanner.h"
 
 /*******************
@@ -22,7 +23,7 @@ static ??? get_number(???);
 static ??? get_string(???);
 static ??? get_special(???);
 static void downshift_word(char* str);
-static BOOLEAN is_reserved_word(???);
+static BOOLEAN is_reserved_word(char* str);
 
 typedef enum
 {
@@ -47,14 +48,22 @@ typedef struct
 RwStruct;
 
 const RwStruct rw_table[9][10] = {
-    {{"do",DO},{"if",IF},{"in",IN},{"of",OF},{"or",OR},{"to",TO},{NULL,0}}, //Reserved words of size 2
-    {{"and",AND},{"div",DIV},{"end",END},{"for",FOR},{"mod",MOD},{"nil",NIL},{"not",NOT},{"set",SET},{"var",VAR},{NULL,0}}, //Reserved words of size 3
-    {{"case",CASE},{"else",ELSE},{"file",FFILE},{"goto",GOTO},{"then",THEN},{"type",TYPE},{"with",WITH},{NULL,0}}, //Reserved words of size 4
-    {{"array",ARRAY},{"begin",BEGIN},{"const",CONST},{"label",LABEL},{"until",UNTIL},{"while",WHILE},{NULL,0}},  //Reserved words of size 5
-    {{"downto",DOWNTO}, {"packed",PACKED},{"record",RECORD}, {"repeat",REPEAT},{NULL,0}},  // Reserved words of size 6
-    {{"program", PROGRAM},{NULL,0}}, /* Reserved words of size 7 */
-    {{"function", FUNCTION},{NULL,0}}, /* Reserved words of size 8 */
-    {{"procedure", PROCEDURE},{NULL,0}}  /* Reserved words of size 9 */
+	/*	[0]	Reserved words of size 2	*/
+    {{"do",DO},{"if",IF},{"in",IN},{"of",OF},{"or",OR},{"to",TO},{NULL,0}}, 
+	/*	[1]	Reserved words of size 3	*/
+    {{"and",AND},{"div",DIV},{"end",END},{"for",FOR},{"mod",MOD},{"nil",NIL},{"not",NOT},{"set",SET},{"var",VAR},{NULL,0}},
+	/*	[2]	Reserved words of size 4	*/
+    {{"case",CASE},{"else",ELSE},{"file",FFILE},{"goto",GOTO},{"then",THEN},{"type",TYPE},{"with",WITH},{NULL,0}}, 
+	/*	[3]	Reserved words of size 5	*/
+    {{"array",ARRAY},{"begin",BEGIN},{"const",CONST},{"label",LABEL},{"until",UNTIL},{"while",WHILE},{NULL,0}},  
+	/*	[4]	Reserved words of size 6	*/
+    {{"downto",DOWNTO}, {"packed",PACKED},{"record",RECORD}, {"repeat",REPEAT},{NULL,0}},  
+	/*	[5]	Reserved words of size 7	*/
+    {{"program", PROGRAM},{NULL,0}}, 
+	/*	[6]	Reserved words of size 8	*/
+    {{"function", FUNCTION},{NULL,0}}, 
+	/*	[7]	Reserved words of size 9	*/
+    {{"procedure", PROCEDURE},{NULL,0}}  
 };
 
 void init_scanner(FILE *source_file, char source_name[], char date[])
@@ -263,10 +272,27 @@ static void downshift_word(char* str)
 	}
 }
 
-static BOOLEAN is_reserved_word(???)
+static BOOLEAN is_reserved_word(char* str)
 {
-    /*
-     Examine the reserved word table and determine if the function input is a reserved word.
-     */
-    return FALSE;
+    /*	Examine the reserved word table and determine if the function input is a reserved word.	*/
+	char* strPtr;
+	int i = 0, strLength = strlen(str);
+	if(strLength < 2 || strLength > 9){
+		/*	All tokens are of length [2,9] so if str isn't in that range, return false.	*/
+		return FALSE;
+	}
+
+	do{
+		/*	Get char* to next token	*/
+		strPtr = rw_table[i][strLength-2].string;
+		if(strncmp(str, strPtr, strLength) == 0){
+			/*	If strings are equal...
+			...return TRUE	*/
+			return TRUE;
+		}
+		i++;
+	}while(strPtr != NULL);
+
+	return FALSE;
+
 }
