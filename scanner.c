@@ -19,9 +19,9 @@ static char* get_char();
 static char* skip_comment(char* str);
 static char* skip_blanks(char* str);
 static BOOLEAN get_word(char buffer[], char* ptr);
-static ??? get_number(???);
+static LiteralValue get_number(char* str)
 static ??? get_string(???);
-static ??? get_special(???);
+static void get_special(char buffer[], char* str);
 static void downshift_word(char* str);
 static BOOLEAN is_reserved_word(char* str);
 
@@ -281,12 +281,19 @@ static LiteralValue get_string(char buffer[], char* ptr)
 
 }
 
-static ??? get_special(???)
+static void get_special(char buffer[], char* str)
 {
     /*
      Write some code to Extract the special token.  Most are single-character
      some are double-character.  Set the token appropriately.
      */
+	int i;
+	char* ptr = str;
+	buffer[0] = *ptr;
+	ptr++;
+	ptr = get_char(ptr);
+	buffer[1] = (char_table[*ptr] == SPECIAL)? *ptr : '\0';
+	buffer[2] = '\0';
 }
 
 static void downshift_word(char* str)
