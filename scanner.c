@@ -18,7 +18,7 @@
 static char* get_char();
 static char* skip_comment(char* str);
 static char* skip_blanks(char* str);
-static ??? get_word(???);
+static BOOLEAN get_word(char buffer[], char* ptr);
 static ??? get_number(???);
 static ??? get_string(???);
 static ??? get_special(???);
@@ -209,7 +209,7 @@ static char* skip_comment(char* str)
 	return ptr;
 }
 
-static BOOLEAN get_word(char* ptr, char buffer[])
+static BOOLEAN get_word(char buffer[], char* ptr)
 {
 	/*	Stores word in char buffer[]	*/
     /*
@@ -240,18 +240,45 @@ static BOOLEAN get_word(char* ptr, char buffer[])
 	return is_reserved_word(lowercaseBuffer);
 }
 
-static ??? get_number(???)
+static LiteralValue get_number(char* str)
 {
     /*
      Write some code to Extract the number and convert it to a literal number.
      */
+	int intVal;
+	double doubleVal;
+	LiteralValue retVal;
+	BOOLEAN hasDecimal;
+	int i;
+	char* ptr;
+	char tmp[MAX_TOKEN_STRING_LENGTH+1];
+	tmp[MAX_TOKEN_STRING_LENGTH] = '\0';
+	i = 0;
+	hasDecimal = FALSE;
+	while((char_table[*(ptr = get_char(ptr))] == NUMBER) || *ptr == '.'){
+		if(*ptr == '.'){hasDecimal = TRUE;}
+		tmp[i] = *ptr;
+		ptr++;
+		i++;
+	}
+	for(i; i<MAX_TOKEN_STRING_LENGTH-1; i++){
+		tmp[i] = '\0';
+	}
+
+	intVal = atoi(tmp);
+	doubleVal = atof(tmp);
+	LiteralValue retVal = {(hasDecimal? doubleVal : intVal)};
+	return retVal;
 }
 
-static ??? get_string(???)
+static LiteralValue get_string(char buffer[], char* ptr)
 {
     /*
      Write some code to Extract the string
      */
+
+
+
 }
 
 static ??? get_special(???)
