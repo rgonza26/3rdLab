@@ -15,7 +15,7 @@
  You need to design the proper parameter list and 
  return types for functions with ???.
  ******************/
-static char get_char();
+static char* get_char();
 static char* skip_comment(char* str);
 static char* skip_blanks(char* str);
 static ??? get_word(???);
@@ -39,6 +39,8 @@ static FILE *src_file;
 static char src_name[MAX_FILE_NAME_LENGTH];
 static char todays_date[DATE_STRING_LENGTH];
 static CharCode char_table[256];  /* The character table */
+
+static char line_buffer[MAX_SOURCE_LINE_LENGTH];
 
 typedef struct
 {
@@ -81,27 +83,22 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 	/*0,      1,     2,     3,       4,		   5		*/
     /*LETTER, DIGIT, QUOTE, SPECIAL, EOF_CODE, UNUSED	*/
 
-
 	/*	Initialize array to UNUSED	*/
 	for(asciiChar = 0; asciiChar <= 255; asciiChar++){
 		char_table[asciiChar] = UNUSED;
 	}
-
 	/* [48, 57]	= DIGIT	*/
 	for(asciiChar = 48; asciiChar<=57; asciiChar++){
 		char_table[asciiChar] = DIGIT;
 	}
-
 	/* [65, 90] = LETTER */
 	for(asciiChar = 65; asciiChar <= 90; asciiChar++){
 		char_table[asciiChar] = LETTER;
 	}
-
     /* [97, 122] = LETTER */
 	for(asciiChar = 97; asciiChar <= 122; asciiChar++){
 		char_table[asciiChar] = LETTER;
 	}
-	
 	/*	SPECIAL CHARACTERS:
 	^ * ( ) - + = [ ] : ; < > , . / := <= >= <> ..				
 	*/
@@ -114,7 +111,6 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 	for(asciiChar = 91; asciiChar <= 94; asciiChar++){
 		char_table[asciiChar] = SPECIAL;
 	}
-
 	/* QUOTES */
 	char_table[34] = QUOTE;
 	char_table[39] = QUOTE;
@@ -155,27 +151,26 @@ Token* get_token()
     return ???; /*What should be returned here? */
 }
 
-static char get_char()// still testing...
-{
-    char ch = EOF_CHAR;
-    
- 	if (get_source_line[line_number] == '\n' ||
-        line_number >= MAX_SOURCE_LINE_LENGTH) {
-        
- 		ch = '\0';
-	}
-    
-	else
-		ch = get_source_line[line_number];
-    
-	line_number++;
-	return ch;	
+static char* get_char(char* arg_charPtr)
+{	
     /*
      If at the end of the current line (how do you check for that?),
      we should call get source line.  If at the EOF (end of file) we should
      set the character ch to EOF and leave the function.
      */
-    
+	char* retPtr;
+	if(*arg_charPtr == EOF){
+		retPtr = arg_charPtr;
+		return retPtr;
+	}else if(*arg_charPtr == '\n'){
+		get_source_line(line_buffer);
+		return line_buffer;
+	}else if(arg_charPtr == (line_buffer + MAX_SOURCE_LINE_LENGTH - 1)){
+		get_source_line(line_buffer);
+		return line_buffer;
+	}else{
+		return arg_charPtr;
+	}
     /*
      Write some code to set the character ch to the next character in the buffer
      */
@@ -188,7 +183,7 @@ static char* skip_blanks(char* str)
      to the first non blank character
      */
 	char* ptr = str;
-	while(*ptr == ' '){
+	while(*(ptr = get_char(ptr)) == ' '){
 		ptr++;
 	}
 	return ptr;
@@ -203,30 +198,46 @@ static char* skip_comment(char* str)
 	char* ptr = str;
 	do{
 		ptr = skip_blanks(ptr);
-		if(*str == '{'){
-			while(*str != '}'){
+		if(*(ptr = get_char()) == '{'){
+			while(*(ptr = get_char()) != '{'){
 				ptr++;
 			}
 			ptr++;
 		}
-		skip_blanks(ptr);
 	}while(*ptr == '{' || *ptr == ' ');
 
 	return ptr;
 }
 
-static ??? get_word(???)
+static BOOLEAN get_word(char* ptr, char buffer[])
 {
+	/*	Stores word in char buffer[]	*/
     /*
      Write some code to Extract the word
      */
-    
+	int i, len = 0;
+	char lowercaseBuffer[MAX_TOKEN_STRING_LENGTH + 1];
+
+	while((*(ptr = get_char(ptr)) != ' ') && (len < MAX_TOKEN_STRING_LENGTH) && ((char_table[*ptr] == LETTER) || (char_table[*ptr] == DIGIT))){
+		buffer[0] = *ptr;
+		len++;
+		ptr++;
+	}
+	while(len < MAX_TOKEN_STRING_LENGTH){
+		buffer[len] = '\0';
+		len++;
+	}
+
     //Downshift the word, to make it lower case
-    
+    lowercaseBuffer[MAX_TOKEN_STRING_LENGTH] = '\0';
+	for(i=0; i<strlen(buffer) && i<MAX_TOKEN_STRING_LENGTH; i++){
+		lowercaseBuffer[i] = buffer[i];
+	}
     /*
      Write some code to Check if the word is a reserved word.
      if it is not a reserved word its an identifier.
      */
+	return is_reserved_word(lowercaseBuffer);
 }
 
 static ??? get_number(???)
@@ -286,13 +297,10 @@ static BOOLEAN is_reserved_word(char* str)
 		/*	Get char* to next token	*/
 		strPtr = rw_table[i][strLength-2].string;
 		if(strncmp(str, strPtr, strLength) == 0){
-			/*	If strings are equal...
-			...return TRUE	*/
+			/*	If strings are equal return TRUE	*/
 			return TRUE;
 		}
 		i++;
 	}while(strPtr != NULL);
-
 	return FALSE;
-
 }
