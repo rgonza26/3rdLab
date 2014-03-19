@@ -112,9 +112,7 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 		char_table[asciiChar] = SPECIAL;
 	}
 	/* QUOTES */
-	char_table[34] = QUOTE;
 	char_table[39] = QUOTE;
-	char_table[96] = QUOTE;
 }
 
 BOOLEAN get_source_line(char source_buffer[])
@@ -138,15 +136,36 @@ BOOLEAN get_source_line(char source_buffer[])
 
 Token* get_token()
 {
-    Token token;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
-    char ch; /*This can be the current character you are examining during scanning. */
+    Token* token;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
+    char* ptr; /*This can be the current character you are examining during scanning. */
+	BOOLEAN isReserved;
     char token_string[MAX_TOKEN_STRING_LENGTH]; /*Store your token here as you build it. */
     char *token_ptr = token_string; /*write some code to point this to the beginning of token_string */
-    
-    /*1.  Skip past all of the blanks
+    token = (Token*)malloc(sizeof(Token));
 
-    //2.  figure out which case you are dealing with LETTER, DIGIT, QUOTE, EOF, or special, by examining ch
-    //3.  Call the appropriate function to deal with the cases in 2. */
+    /*	1.  Skip past all of the blanks	*/
+	ptr = skip_blanks(ptr);
+    /*	2.  figure out which case you are dealing with LETTER, DIGIT, QUOTE, EOF, or SPECIAL, by examining ch	*/
+	if(*(ptr = get_char(ptr)) == '{'){skip_comment(ptr);}
+
+	if(char_table[*ptr] == LETTER){
+		token->literalType = STRING_LIT;
+		isReserved = get_word(token_string, ptr);
+		strcpy(token_string, token->literalValue.valString);
+		token->tokenCode = isReserved? /?????????????????/ : IDENTIFIER;
+		token->next = NULL;
+		return token;
+	}else if(char_table[*ptr] == DIGIT){
+		
+	}else if(char_table[*ptr] == QUOTE){
+
+	}else if(char_table[*ptr] == EOF){
+
+	}else if(char_table[*ptr] == SPECIAL){
+
+	}
+
+    /*	3.  Call the appropriate function to deal with the cases in 2. */
     
     return ???; /*What should be returned here? */
 }
