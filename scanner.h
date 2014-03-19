@@ -12,7 +12,7 @@
 #include "common.h"
 #include "print.h"
 
-void init_scanner();
+void init_scanner(FILE* source_file, char source_name[], char date[]);
 Token* get_token();
 
 #endif

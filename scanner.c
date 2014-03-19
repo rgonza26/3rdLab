@@ -19,8 +19,8 @@ static char* get_char();
 static char* skip_comment(char* str);
 static char* skip_blanks(char* str);
 static BOOLEAN get_word(char buffer[], char* ptr);
-static LiteralValue get_number(char* str)
-static ??? get_string(???);
+static LiteralValue get_number(char* str);
+static LiteralValue get_string(char* str);
 static void get_special(char buffer[], char* str);
 static void downshift_word(char* str);
 static BOOLEAN is_reserved_word(char* str);
@@ -138,10 +138,10 @@ BOOLEAN get_source_line(char source_buffer[])
 
 Token* get_token()
 {
+    Token token;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
     char ch; /*This can be the current character you are examining during scanning. */
     char token_string[MAX_TOKEN_STRING_LENGTH]; /*Store your token here as you build it. */
     char *token_ptr = token_string; /*write some code to point this to the beginning of token_string */
-    Token token;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
     
     /*1.  Skip past all of the blanks
 
@@ -245,40 +245,48 @@ static LiteralValue get_number(char* str)
     /*
      Write some code to Extract the number and convert it to a literal number.
      */
-	int intVal;
-	double doubleVal;
 	LiteralValue retVal;
 	BOOLEAN hasDecimal;
 	int i;
 	char* ptr;
-	char tmp[MAX_TOKEN_STRING_LENGTH+1];
-	tmp[MAX_TOKEN_STRING_LENGTH] = '\0';
+	char tmp[MAX_TOKEN_STRING_LENGTH];
+	tmp[MAX_TOKEN_STRING_LENGTH-1] = '\0';
 	i = 0;
 	hasDecimal = FALSE;
-	while((char_table[*(ptr = get_char(ptr))] == NUMBER) || *ptr == '.'){
+	while((char_table[*(ptr = get_char(ptr))] == NUMBER) || *(ptr = get_char(ptr)) == '.'){
 		if(*ptr == '.'){hasDecimal = TRUE;}
 		tmp[i] = *ptr;
 		ptr++;
 		i++;
 	}
-	for(i; i<MAX_TOKEN_STRING_LENGTH-1; i++){
+	for(i; i<MAX_TOKEN_STRING_LENGTH; i++){
 		tmp[i] = '\0';
 	}
 
-	intVal = atoi(tmp);
-	doubleVal = atof(tmp);
-	LiteralValue retVal = {(hasDecimal? doubleVal : intVal)};
+	LiteralValue retVal = {(hasDecimal? atof(tmp) : atoi(tmp))};
 	return retVal;
 }
 
-static LiteralValue get_string(char buffer[], char* ptr)
+static LiteralValue get_string(char* str)
 {
     /*
      Write some code to Extract the string
      */
-
-
-
+	LiteralValue retVal;
+	int i;
+	char* ptr = str;
+	ptr++;
+	ptr = get_char(ptr);
+	i = 0;
+	while(*(ptr = get_char(ptr)) != '\''){
+		retVal.valString[i] = *ptr;
+		i++;
+		ptr++;
+	}
+	for(i; i<MAX_TOKEN_STRING_LENGTH; i++){
+		retVal.valString[i] = '\0';
+	}
+	return retVal;
 }
 
 static void get_special(char buffer[], char* str)

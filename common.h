@@ -63,7 +63,7 @@ LiteralType;
 typedef union LiteralValue{
 	int valInt;
 	double valDouble;
-	char* valString;
+	char valString[MAX_TOKEN_STRING_LENGTH];	/*	TODO: make char array instead?	*/
 };
 
 
