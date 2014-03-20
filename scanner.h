@@ -15,4 +15,7 @@
 void init_scanner(FILE* source_file, char source_name[], char date[]);
 Token* get_token();
 
+static char* ch;
+static char line_buffer[MAX_SOURCE_LINE_LENGTH];
+
 #endif

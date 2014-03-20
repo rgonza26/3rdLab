@@ -17,6 +17,7 @@ void add_token_to_list(Token *list, Token *new_token);
 
 int main(int argc, const char * argv[])
 {
+	ch = line_buffer;
     Token *token;
     Token *token_list; /*This needs to be implemented as a linked list in scanner.h. */
     char source_name[MAX_FILE_NAME_LENGTH];

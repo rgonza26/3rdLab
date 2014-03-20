@@ -15,15 +15,16 @@
  You need to design the proper parameter list and 
  return types for functions with ???.
  ******************/
-static char* get_char();
-static char* skip_comment(char* str);
-static char* skip_blanks(char* str);
-static BOOLEAN get_word(char buffer[], char* ptr);
-static LiteralValue get_number(char* str);
-static LiteralValue get_string(char* str);
-static void get_special(char buffer[], char* str);
+static char get_char();
+static char peek_char();
+static char skip_comment();
+static char skip_blanks();
+static Token get_word(char c);
+static Token get_number(char c);
+static Token get_string(char c);
+static Token get_special(char  c);
 static void downshift_word(char* str);
-static BOOLEAN is_reserved_word(char* str);
+static TokenCode is_reserved_word(char* str);
 
 typedef enum
 {
@@ -39,6 +40,7 @@ static FILE *src_file;
 static char src_name[MAX_FILE_NAME_LENGTH];
 static char todays_date[DATE_STRING_LENGTH];
 static CharCode char_table[256];  /* The character table */
+static char* ch;
 
 static char line_buffer[MAX_SOURCE_LINE_LENGTH];
 
@@ -51,21 +53,21 @@ RwStruct;
 
 const RwStruct rw_table[9][10] = {
 	/*	[0]	Reserved words of size 2	*/
-    {{"do",DO},{"if",IF},{"in",IN},{"of",OF},{"or",OR},{"to",TO},{NULL,0}}, 
+    {{"do",DO},{"if",IF},{"in",IN},{"of",OF},{"or",OR},{"to",TO},{NULL,NO_TOKEN}}, 
 	/*	[1]	Reserved words of size 3	*/
-    {{"and",AND},{"div",DIV},{"end",END},{"for",FOR},{"mod",MOD},{"nil",NIL},{"not",NOT},{"set",SET},{"var",VAR},{NULL,0}},
+    {{"and",AND},{"div",DIV},{"end",END},{"for",FOR},{"mod",MOD},{"nil",NIL},{"not",NOT},{"set",SET},{"var",VAR},{NULL,NO_TOKEN}},
 	/*	[2]	Reserved words of size 4	*/
-    {{"case",CASE},{"else",ELSE},{"file",FFILE},{"goto",GOTO},{"then",THEN},{"type",TYPE},{"with",WITH},{NULL,0}}, 
+    {{"case",CASE},{"else",ELSE},{"file",FFILE},{"goto",GOTO},{"then",THEN},{"type",TYPE},{"with",WITH},{NULL,NO_TOKEN}}, 
 	/*	[3]	Reserved words of size 5	*/
-    {{"array",ARRAY},{"begin",BEGIN},{"const",CONST},{"label",LABEL},{"until",UNTIL},{"while",WHILE},{NULL,0}},  
+    {{"array",ARRAY},{"begin",BEGIN},{"const",CONST},{"label",LABEL},{"until",UNTIL},{"while",WHILE},{NULL,NO_TOKEN}},  
 	/*	[4]	Reserved words of size 6	*/
-    {{"downto",DOWNTO}, {"packed",PACKED},{"record",RECORD}, {"repeat",REPEAT},{NULL,0}},  
+    {{"downto",DOWNTO}, {"packed",PACKED},{"record",RECORD}, {"repeat",REPEAT},{NULL,NO_TOKEN}},  
 	/*	[5]	Reserved words of size 7	*/
-    {{"program", PROGRAM},{NULL,0}}, 
+    {{"program", PROGRAM},{NULL,NO_TOKEN}}, 
 	/*	[6]	Reserved words of size 8	*/
-    {{"function", FUNCTION},{NULL,0}}, 
+    {{"function", FUNCTION},{NULL,NO_TOKEN}}, 
 	/*	[7]	Reserved words of size 9	*/
-    {{"procedure", PROCEDURE},{NULL,0}}  
+    {{"procedure", PROCEDURE},{NULL,NO_TOKEN}}  
 };
 
 void init_scanner(FILE *source_file, char source_name[], char date[])
@@ -111,6 +113,8 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 	for(asciiChar = 91; asciiChar <= 94; asciiChar++){
 		char_table[asciiChar] = SPECIAL;
 	}
+	/*	UNDERSCORE	*/
+	char_table[95] = LETTER;
 	/* QUOTES */
 	char_table[39] = QUOTE;
 }
@@ -136,191 +140,213 @@ BOOLEAN get_source_line(char source_buffer[])
 
 Token* get_token()
 {
-    Token* token;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
-    char* ptr; /*This can be the current character you are examining during scanning. */
+	int iTest;
+	float fTest;
+	Token newToken;
+    Token* retToken;  /*I am missing the most important variable in the function, what is it?  Hint: what should I return? */
+    char c; /*This can be the current character you are examining during scanning. */
 	BOOLEAN isReserved;
-    char token_string[MAX_TOKEN_STRING_LENGTH]; /*Store your token here as you build it. */
-    char *token_ptr = token_string; /*write some code to point this to the beginning of token_string */
-    token = (Token*)malloc(sizeof(Token));
+    retToken = (Token*)malloc(sizeof(Token));
 
     /*	1.  Skip past all of the blanks	*/
-	ptr = skip_blanks(ptr);
+	skip_blanks();
+	if(peek_char() == '{'){
+		c = skip_comment();
+	}
     /*	2.  figure out which case you are dealing with LETTER, DIGIT, QUOTE, EOF, or SPECIAL, by examining ch	*/
-	if(*(ptr = get_char(ptr)) == '{'){skip_comment(ptr);}
-
-	if(char_table[*ptr] == LETTER){
-		token->literalType = STRING_LIT;
-		isReserved = get_word(token_string, ptr);
-		strcpy(token_string, token->literalValue.valString);
-		token->tokenCode = isReserved? /?????????????????/ : IDENTIFIER;
-		token->next = NULL;
-		return token;
-	}else if(char_table[*ptr] == DIGIT){
-		
-	}else if(char_table[*ptr] == QUOTE){
-
-	}else if(char_table[*ptr] == EOF){
-
-	}else if(char_table[*ptr] == SPECIAL){
-
+	if(char_table[c] == LETTER){
+		newToken = get_word(c);
+	}else if(char_table[c] == DIGIT){
+		newToken = get_number(c);
+	}else if(char_table[c] == QUOTE){
+		newToken = get_string(c);
+	}else if(c == EOF){
+		newToken.literalValue.valInt = -1;
+		newToken.literalType = INTEGER_LIT;
+		newToken.tokenCode = END_OF_FILE;
+	}else if(char_table[c] == SPECIAL){
+		newToken = get_special(c);
 	}
 
-    /*	3.  Call the appropriate function to deal with the cases in 2. */
-    
-    return ???; /*What should be returned here? */
+	memcpy(retToken, &newToken, sizeof(Token));
+    return retToken; /*What should be returned here? */
 }
 
-static char* get_char(char* arg_charPtr)
+static char get_char()
 {	
     /*
      If at the end of the current line (how do you check for that?),
      we should call get source line.  If at the EOF (end of file) we should
      set the character ch to EOF and leave the function.
      */
-	char* retPtr;
-	if(*arg_charPtr == EOF){
-		retPtr = arg_charPtr;
-		return retPtr;
-	}else if(*arg_charPtr == '\n'){
+	char c;
+	if(*ch == EOF){
+		return EOF;
+	/*	NULLCHAR OR NEWLINE OR > ? ? ?	*/
+	}else if(*ch = '\0'){
 		get_source_line(line_buffer);
-		return line_buffer;
-	}else if(arg_charPtr == (line_buffer + MAX_SOURCE_LINE_LENGTH - 1)){
-		get_source_line(line_buffer);
-		return line_buffer;
-	}else{
-		return arg_charPtr;
+		ch = line_buffer;
 	}
+	c = *ch;
+	ch++;
+	return c;
     /*
      Write some code to set the character ch to the next character in the buffer
      */
 }
 
-static char* skip_blanks(char* str)
+static char peek_char(){
+	return *ch;
+}
+
+
+static char skip_blanks()
 {
     /*
      Write some code to skip past the blanks in the program and return a pointer
      to the first non blank character
      */
-	char* ptr = str;
-	while(*(ptr = get_char(ptr)) == ' '){
-		ptr++;
-	}
-	return ptr;
+	char c;
+	do{
+		c = get_char();
+	}while(c == ' ');
+	return c;
 }
 
-static char* skip_comment(char* str)
+static char skip_comment()
 {
     /*
      Write some code to skip past the comments in the program and return a pointer
      to the first non blank character.  Watch out for the EOF character.
      */
-	char* ptr = str;
-	do{
-		ptr = skip_blanks(ptr);
-		if(*(ptr = get_char()) == '{'){
-			while(*(ptr = get_char()) != '{'){
-				ptr++;
-			}
-			ptr++;
-		}
-	}while(*ptr == '{' || *ptr == ' ');
+	char c;
 
-	return ptr;
+	do{
+		c = get_char();
+	}while(c != '}');
+
+	c = get_char();
+
+	if(c == ' '){
+		c = skip_blanks();
+	}if(c == '{'){
+		return skip_comment();
+	}else{
+		return c;
+	}
 }
 
-static BOOLEAN get_word(char buffer[], char* ptr)
+static Token get_word(char c)
 {
 	/*	Stores word in char buffer[]	*/
     /*
      Write some code to Extract the word
      */
-	int i, len = 0;
-	char lowercaseBuffer[MAX_TOKEN_STRING_LENGTH + 1];
+	Token token;
+	LiteralValue toLower;
 
-	while((*(ptr = get_char(ptr)) != ' ') && (len < MAX_TOKEN_STRING_LENGTH) && ((char_table[*ptr] == LETTER) || (char_table[*ptr] == DIGIT))){
-		buffer[0] = *ptr;
-		len++;
-		ptr++;
+	token.literalType = STRING_LIT;
+	token.literalValue.valString[0] = c;
+	int i = 1;
+	while(char_table[peek_char()] == LETTER || char_table[peek_char()] == NUMBER){
+		c = get_char();
+		token.literalValue.valString[i] = toLower.valString[i] = c;
+		i++;
 	}
-	while(len < MAX_TOKEN_STRING_LENGTH){
-		buffer[len] = '\0';
-		len++;
+	while(i < MAX_TOKEN_STRING_LENGTH){
+		token.literalValue.valString[i] = toLower.valString[i] = '\0';
+		i++;
 	}
 
-    //Downshift the word, to make it lower case
-    lowercaseBuffer[MAX_TOKEN_STRING_LENGTH] = '\0';
-	for(i=0; i<strlen(buffer) && i<MAX_TOKEN_STRING_LENGTH; i++){
-		lowercaseBuffer[i] = buffer[i];
-	}
+	downshift_word(toLower.valString);
+	token.tokenCode = is_reserved_word(token.literalValue.valString);
+
+	return token;
     /*
      Write some code to Check if the word is a reserved word.
      if it is not a reserved word its an identifier.
      */
-	return is_reserved_word(lowercaseBuffer);
 }
 
-static LiteralValue get_number(char* str)
+static Token get_number(char c)
 {
     /*
      Write some code to Extract the number and convert it to a literal number.
      */
-	LiteralValue retVal;
+	Token token;
 	BOOLEAN hasDecimal;
-	int i;
-	char* ptr;
-	char tmp[MAX_TOKEN_STRING_LENGTH];
-	tmp[MAX_TOKEN_STRING_LENGTH-1] = '\0';
-	i = 0;
-	hasDecimal = FALSE;
-	while((char_table[*(ptr = get_char(ptr))] == NUMBER) || *(ptr = get_char(ptr)) == '.'){
-		if(*ptr == '.'){hasDecimal = TRUE;}
-		tmp[i] = *ptr;
-		ptr++;
+	int i = 0;
+
+	token.tokenCode = NUMBER;
+	token.literalValue.valString[0] = c;
+
+	while(char_table[peek_char()] == LETTER || char_table[peek_char()] == NUMBER || c == '.'){
+		c = get_char();
+		token.literalValue.valString[i] = c;
+		hasDecimal = (c == '.')? TRUE : FALSE;
 		i++;
 	}
+
 	for(i; i<MAX_TOKEN_STRING_LENGTH; i++){
-		tmp[i] = '\0';
+		token.literalValue.valString[i] = '\0';
 	}
 
-	LiteralValue retVal = {(hasDecimal? atof(tmp) : atoi(tmp))};
-	return retVal;
+	if(hasDecimal){
+		token.literalType = REAL_LIT;
+		token.literalValue.valDouble = atof(token.literalValue.valString);
+	}else{
+		token.literalType = INTEGER_LIT;
+		token.literalValue.valInt = atoi(token.literalValue.valString);
+	}
+
+	/*
+	LiteralValue retVal = {(hasDecimal? atof(token.literalValue.valString) : atoi(token.literalValue.valString))};
+	*/
+
+	return token;
 }
 
-static LiteralValue get_string(char* str)
+static Token get_string(char c)
 {
     /*
      Write some code to Extract the string
      */
-	LiteralValue retVal;
-	int i;
-	char* ptr = str;
-	ptr++;
-	ptr = get_char(ptr);
-	i = 0;
-	while(*(ptr = get_char(ptr)) != '\''){
-		retVal.valString[i] = *ptr;
+	Token token;
+	int i = 0;
+
+	token.literalType = STRING_LIT;
+	token.tokenCode = STRING;
+	token.literalValue.valString[0] = c;
+
+	while(peek_char() != '\''){
+		c = get_char();
+		token.literalValue.valString[i] = c;
 		i++;
-		ptr++;
 	}
 	for(i; i<MAX_TOKEN_STRING_LENGTH; i++){
-		retVal.valString[i] = '\0';
+		token.literalValue.valString[i] = '\0';
 	}
-	return retVal;
+	
 }
 
-static void get_special(char buffer[], char* str)
+static Token get_special(char c)
 {
     /*
      Write some code to Extract the special token.  Most are single-character
      some are double-character.  Set the token appropriately.
      */
+	Token token;
 	int i;
-	char* ptr = str;
-	buffer[0] = *ptr;
-	ptr++;
-	ptr = get_char(ptr);
-	buffer[1] = (char_table[*ptr] == SPECIAL)? *ptr : '\0';
-	buffer[2] = '\0';
+
+	token.literalType = STRING_LIT;
+
+	token.literalValue.valString[0] = c;
+	token.literalValue.valString[1] = (char_table[peek_char()] == SPECIAL)? get_char() : '\0';
+	token.literalValue.valString[2] = '\0';
+
+	token.tokenCode = is_reserved_word(token.literalValue.valString);
+
+	return token;
 }
 
 static void downshift_word(char* str)
@@ -344,24 +370,24 @@ static void downshift_word(char* str)
 	}
 }
 
-static BOOLEAN is_reserved_word(char* str)
+static TokenCode is_reserved_word(char* str)
 {
     /*	Examine the reserved word table and determine if the function input is a reserved word.	*/
 	char* strPtr;
 	int i = 0, strLength = strlen(str);
 	if(strLength < 2 || strLength > 9){
 		/*	All tokens are of length [2,9] so if str isn't in that range, return false.	*/
-		return FALSE;
+		return NO_TOKEN;
 	}
 
 	do{
 		/*	Get char* to next token	*/
 		strPtr = rw_table[i][strLength-2].string;
 		if(strncmp(str, strPtr, strLength) == 0){
-			/*	If strings are equal return TRUE	*/
-			return TRUE;
+			/*	If strings are equal return the TokenCode for that reserved word	*/
+			return rw_table[i][strLength-2].token_code;
 		}
 		i++;
 	}while(strPtr != NULL);
-	return FALSE;
+	return NO_TOKEN;
 }
