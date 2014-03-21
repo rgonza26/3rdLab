@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Bryce Holton. All rights reserved.
 */
 
+#pragma warning(disable: 4996)
 #include <stdio.h>
 #include <string.h>
 
@@ -68,7 +69,6 @@ struct Token* get_token()
 	struct Token newToken;
     struct Token* retToken;
     char c;
-	BOOLEAN isReserved;
     retToken = (struct Token*)malloc(sizeof(struct Token));
 
 	skip_blanks();
@@ -94,7 +94,7 @@ struct Token* get_token()
     return retToken;
 }
 
-static char get_char()
+char get_char()
 {
 	char c;
 	if(*ch == EOF){
@@ -108,12 +108,12 @@ static char get_char()
 	return c;
 }
 
-static char peek_char(){
+char peek_char(){
 	return *ch;
 }
 
 
-static char skip_blanks()
+char skip_blanks()
 {
 	char c;
 	do{
@@ -122,7 +122,7 @@ static char skip_blanks()
 	return c;
 }
 
-static char skip_comment()
+char skip_comment()
 {
 	char c;
 
@@ -141,7 +141,7 @@ static char skip_comment()
 	}
 }
 
-static struct Token get_word(char c)
+struct Token get_word(char c)
 {
 	struct Token token;
 	union LiteralValue toLower;
@@ -167,7 +167,7 @@ static struct Token get_word(char c)
 	return token;
 }
 
-static struct Token get_number(char c)
+struct Token get_number(char c)
 {
 	struct Token token;
 	BOOLEAN isReal = FALSE;
@@ -197,7 +197,7 @@ static struct Token get_number(char c)
 	return token;
 }
 
-static struct Token get_string(char c)
+struct Token get_string(char c)
 {
 	struct Token token;
 	int i = 0;
@@ -216,7 +216,7 @@ static struct Token get_string(char c)
 	return token;
 }
 
-static struct Token get_special(char c)
+struct Token get_special(char c)
 {
 	struct Token token;
 
@@ -231,7 +231,7 @@ static struct Token get_special(char c)
 	return token;
 }
 
-static void downshift_word(char* str)
+void downshift_word(char* str)
 {
 	int shamt = 32;
 	char* ptr = str;
@@ -244,12 +244,11 @@ static void downshift_word(char* str)
 	}
 }
 
-static TokenCode is_reserved_word(char* str)
+TokenCode is_reserved_word(char* str)
 {
 	char* strPtr;
-	int i;
-	i = 0;
 	int strLength;
+	int i = 0;
 	strLength = strlen(str);
 
 	if(strLength < 2 || strLength > 9){return NO_TOKEN;}

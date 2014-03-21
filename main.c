@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Bryce Holton. All rights reserved.
 */
 
+#pragma warning(disable: 4996)
 #include "common.h"
 #include "print.h"
 #include "scanner.h"
@@ -14,14 +15,14 @@ void add_token_to_list(struct Token *list, struct Token *new_token);
 void quit_scanner(FILE *src_file, struct Token *list);
 FILE *init_lister(const char *name, char source_file_name[], char dte[]);
 
-int main(int argc, const char * argv[])
+int main(int argc, const char* argv[])
 {
-	ch = line_buffer;
     struct Token *token;
     struct Token *token_list; /*This needs to be implemented as a linked list in scanner.h. */
     char source_name[MAX_FILE_NAME_LENGTH];
     char date[DATE_STRING_LENGTH];
     FILE *source_file;
+	ch = line_buffer;
 	source_file = init_lister(argv[1], source_name, date);
     init_scanner(source_file, source_name, date);
 
@@ -31,7 +32,7 @@ int main(int argc, const char * argv[])
         add_token_to_list(token_list, token);
         print_token(token);
     }
-    while (strncmp(token->literalValue.valString, ".", 1) != 0);	/*What is the sentinal value that ends this loop? "." */
+    while (strncmp(token->literalValue.valString, ".", 1) != 0);
 
     quit_scanner(source_file, token_list);
     return 0;
