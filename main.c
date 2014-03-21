@@ -6,14 +6,13 @@
 //  Copyright (c) 2014 Bryce Holton. All rights reserved.
 */
 
-#include <stdio.h>
 #include "common.h"
 #include "print.h"
 #include "scanner.h"
 
-FILE *init_lister(const char *name, char source_file_name[], char dte[]);
-void quit_scanner(FILE *src_file, Token *list);
 void add_token_to_list(Token *list, Token *new_token);
+void quit_scanner(FILE *src_file, Token *list);
+FILE *init_lister(const char *name, char source_file_name[], char dte[]);
 
 int main(int argc, const char * argv[])
 {
@@ -22,7 +21,8 @@ int main(int argc, const char * argv[])
     Token *token_list; /*This needs to be implemented as a linked list in scanner.h. */
     char source_name[MAX_FILE_NAME_LENGTH];
     char date[DATE_STRING_LENGTH];
-    FILE *source_file = init_lister(argv[1], source_name, date);
+    FILE *source_file;
+	source_file = init_lister(argv[1], source_name, date);
     init_scanner(source_file, source_name, date);
 
     do

@@ -13,7 +13,6 @@
 #include <sys/types.h>
 #include <string.h>
 #include <time.h>
-
 #include <stdlib.h>
 
 #define FORM_FEED_CHAR          '\f'
@@ -24,17 +23,11 @@
 #define MAX_LINES_PER_PAGE      50
 #define DATE_STRING_LENGTH      26
 
-typedef enum
-{
-    FALSE, TRUE,
-}
-BOOLEAN;
+typedef enum{
+    FALSE = 0, TRUE,
+}BOOLEAN;
 
-/***************************
- Token Codes
- ***************************/
-typedef enum
-{
+typedef enum{
     NO_TOKEN, IDENTIFIER, NUMBER, STRING, UPARROW, STAR, LPAREN,
     RPAREN, MINUS, PLUS, EQUAL, LBRACKET,
     RBRACKET, COLON, SEMICOLON, LT, GT, COMMA, PERIOD, SLASH,
@@ -43,43 +36,23 @@ typedef enum
     FOR, FUNCTION, GOTO, IF, IN, LABEL, MOD, NIL, NOT, OF, OR, PACKED,
     PROCEDURE, PROGRAM, RECORD, REPEAT, SET, THEN, TO, TYPE, UNTIL,
     VAR, WHILE, WITH,
-}
-TokenCode;
+}TokenCode;
 
-/*****************************
- Literal Type
- *****************************/
-typedef enum
-{
+typedef enum{
     INTEGER_LIT, REAL_LIT, STRING_LIT,
-}
-LiteralType;
+}LiteralType;
 
-/*****************************
- Literal Value
- *****************************/
-/*	INSERT: This is a union to store a literal value.  Can store 
-	an int, double, or a pointer to a string	*/
-typedef union LiteralValue{
+typedef union{
 	int valInt;
 	double valDouble;
-	char valString[MAX_TOKEN_STRING_LENGTH];	/*	TODO: make char array instead?	*/
-};
+	char valString[MAX_TOKEN_STRING_LENGTH];
+}LiteralValue;
 
-
-/**************
- this is a valid Pascal token.  A token must have a literal type,
- a literal value, and a token code.  It also must have a link to 
- another token since this must be stored as a linked list.
- ***************/
-typedef struct
-{
-	/* FILL THIS IN */
+typedef struct{
     LiteralType literalType;
 	LiteralValue literalValue;
 	TokenCode tokenCode;
-	Token next;
-}
-Token;
+	Token* next;
+}Token;
 
 #endif
