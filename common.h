@@ -1,5 +1,5 @@
 /*
-//  common.c
+//  common.h
 //  Lab3
 //
 //  Created by Bryce Holton.
@@ -42,17 +42,17 @@ typedef enum{
     INTEGER_LIT, REAL_LIT, STRING_LIT,
 }LiteralType;
 
-typedef union{
+union LiteralValue{
 	int valInt;
 	double valDouble;
 	char valString[MAX_TOKEN_STRING_LENGTH];
-}LiteralValue;
+};
 
-typedef struct{
+struct Token{
     LiteralType literalType;
-	LiteralValue literalValue;
+	union LiteralValue literalValue;
 	TokenCode tokenCode;
-	Token* next;
-}Token;
+	struct Token* next;
+};
 
 #endif

@@ -10,15 +10,15 @@
 #include "print.h"
 #include "scanner.h"
 
-void add_token_to_list(Token *list, Token *new_token);
-void quit_scanner(FILE *src_file, Token *list);
+void add_token_to_list(struct Token *list, struct Token *new_token);
+void quit_scanner(FILE *src_file, struct Token *list);
 FILE *init_lister(const char *name, char source_file_name[], char dte[]);
 
 int main(int argc, const char * argv[])
 {
 	ch = line_buffer;
-    Token *token;
-    Token *token_list; /*This needs to be implemented as a linked list in scanner.h. */
+    struct Token *token;
+    struct Token *token_list; /*This needs to be implemented as a linked list in scanner.h. */
     char source_name[MAX_FILE_NAME_LENGTH];
     char date[DATE_STRING_LENGTH];
     FILE *source_file;
@@ -37,17 +37,18 @@ int main(int argc, const char * argv[])
     return 0;
 }
 
-void add_token_to_list(Token *list, Token *new_token)
+void add_token_to_list(struct Token *list, struct Token *new_token)
 {
     /*Add new_token to the list knowing that list is a linked list. */
+	new_token->next = NULL;
 	list->next = new_token;
 }
 
-void quit_scanner(FILE *src_file, Token *list)
+void quit_scanner(FILE *src_file, struct Token *list)
 {
     /*write code to free all of the memory for the token list */
-	Token* ptr_lead;
-	Token* ptr_trail;
+	struct Token* ptr_lead;
+	struct Token* ptr_trail;
 
 	/* If list is empty */
 	if(list == NULL){

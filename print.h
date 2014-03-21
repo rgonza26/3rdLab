@@ -11,10 +11,6 @@
 
 #include "common.h"
 
-void print_line(char line[], char source_name_to_print[], char date_to_print[]);
-static void print_page_header(char source_name[], char date[]);
-void print_token(Token *token);
-
 const char* const SYMBOL_STRINGS[] =
 {
     "<no token>", "<IDENTIFIER>", "<NUMBER>", "<STRING>",
@@ -27,5 +23,11 @@ const char* const SYMBOL_STRINGS[] =
     "PROGRAM","RECORD","REPEAT","SET","THEN","TO","TYPE","UNTIL",
     "VAR","WHILE","WITH"
 };
+
+
+void print_line(char line[], char source_name_to_print[], char date_to_print[]);
+static void print_page_header(char source_name[], char date[]);
+void print_token(struct Token *token);
+
 
 #endif

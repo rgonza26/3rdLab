@@ -33,7 +33,7 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 		char_table[asciiChar] = LETTER;
 	}
 	/*	SPECIAL CHARACTERS:
-	^ * ( ) - + = [ ] : ; < > , . / := <= >= <> ..				
+	^ * ( ) - + = [ ] : ; < > , . / := <= >= <> ..
 	*/
 	for(asciiChar = 40; asciiChar <= 47; asciiChar++){
 		char_table[asciiChar] = SPECIAL;
@@ -52,7 +52,7 @@ BOOLEAN get_source_line(char source_buffer[])
 {
     char print_buffer[MAX_SOURCE_LINE_LENGTH + 9];
     static int line_number = 0;
-    
+
     if (fgets(source_buffer, MAX_SOURCE_LINE_LENGTH, src_file) != NULL){
         ++line_number;
         sprintf(print_buffer, "%4d: %s", line_number, source_buffer);
@@ -63,13 +63,13 @@ BOOLEAN get_source_line(char source_buffer[])
     }
 }
 
-Token* get_token()
+struct Token* get_token()
 {
-	Token newToken;
-    Token* retToken;
+	struct Token newToken;
+    struct Token* retToken;
     char c;
 	BOOLEAN isReserved;
-    retToken = (Token*)malloc(sizeof(Token));
+    retToken = (struct Token*)malloc(sizeof(struct Token));
 
 	skip_blanks();
 	if(peek_char() == '{'){
@@ -90,12 +90,12 @@ Token* get_token()
 		newToken = get_special(c);
 	}
 
-	memcpy(retToken, &newToken, sizeof(Token));
+	memcpy(retToken, &newToken, sizeof(struct Token));
     return retToken;
 }
 
 static char get_char()
-{	
+{
 	char c;
 	if(*ch == EOF){
 		return EOF;
@@ -141,15 +141,15 @@ static char skip_comment()
 	}
 }
 
-static Token get_word(char c)
+static struct Token get_word(char c)
 {
-	Token token;
-	LiteralValue toLower;
+	struct Token token;
+	union LiteralValue toLower;
 	TokenCode code;
+	int i = 1;
 
 	token.literalType = STRING_LIT;
 	token.literalValue.valString[0] = c;
-	int i = 1;
 	while(char_table[peek_char()] == LETTER || char_table[peek_char()] == NUMBER){
 		c = get_char();
 		token.literalValue.valString[i] = toLower.valString[i] = c;
@@ -159,7 +159,7 @@ static Token get_word(char c)
 		token.literalValue.valString[i] = toLower.valString[i] = '\0';
 		i++;
 	}
-	
+
 	downshift_word(toLower.valString);
 	code = is_reserved_word(token.literalValue.valString);
 	token.tokenCode = (code == NO_TOKEN)? IDENTIFIER : code;
@@ -167,9 +167,9 @@ static Token get_word(char c)
 	return token;
 }
 
-static Token get_number(char c)
+static struct Token get_number(char c)
 {
-	Token token;
+	struct Token token;
 	BOOLEAN isReal = FALSE;
 	int i = 0;
 
@@ -191,21 +191,21 @@ static Token get_number(char c)
 		token.literalType = REAL_LIT;
 	}else{
 		token.literalType = INTEGER_LIT;
-		token.literalValue.valInt = atoi(token.literalValue.valString);	
+		token.literalValue.valInt = atoi(token.literalValue.valString);
 	}
 
 	return token;
 }
 
-static Token get_string(char c)
+static struct Token get_string(char c)
 {
-	Token token;
+	struct Token token;
 	int i = 0;
 
 	token.literalType = STRING_LIT;
 	token.tokenCode = STRING;
 	token.literalValue.valString[0] = c;
-	
+
 	while(char_table[c = get_char()] != QUOTE){
 		token.literalValue.valString[i] = c;
 		i++;
@@ -216,10 +216,9 @@ static Token get_string(char c)
 	return token;
 }
 
-static Token get_special(char c)
+static struct Token get_special(char c)
 {
-	Token token;
-	int i;
+	struct Token token;
 
 	token.literalType = STRING_LIT;
 
@@ -241,7 +240,7 @@ static void downshift_word(char* str)
 		if(*ptr >= 65 && *ptr <= 90){
 			*ptr = *ptr + shamt;
 		}
-		ptr++; 
+		ptr++;
 	}
 }
 
@@ -250,7 +249,8 @@ static TokenCode is_reserved_word(char* str)
 	char* strPtr;
 	int i;
 	i = 0;
-	int strLength = strlen(str);
+	int strLength;
+	strLength = strlen(str);
 
 	if(strLength < 2 || strLength > 9){return NO_TOKEN;}
 
