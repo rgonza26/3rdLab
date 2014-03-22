@@ -58,6 +58,7 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 	}
 	char_table[95] = LETTER;	/* _underscore_	*/
 	char_table[39] = QUOTE;
+	char_table[32] = UNUSED;	/*	' space '	*/
 
 	get_source_line(line_buffer);
 }
@@ -71,9 +72,10 @@ BOOLEAN get_source_line(char source_buffer[])
         ++line_number;
         sprintf(print_buffer, "%4d: %s", line_number, source_buffer);
         print_line(print_buffer, src_name, todays_date);
-        return (TRUE);
+		printf("\n");
+        return TRUE;
     }else{
-        return (FALSE);
+        return FALSE;
     }
 }
 
@@ -112,9 +114,9 @@ char get_char()
 	char c;
 	if(*ch == EOF){
 		return EOF;
-	}else if((*ch == '\n')){
+	}else if(*ch == '\n' || *ch == '\0'){
 		get_source_line(line_buffer);
-		ch = line_buffer;
+		ch = &line_buffer;
 	}
 	c = *ch;
 	ch++;
@@ -131,7 +133,7 @@ char skip_blanks()
 	char c;
 	do{
 		c = get_char();
-	}while(c == ' ');
+	}while(c == ' ' || c == '\n' || c == '\0' || c == '\t');
 	return c;
 }
 
@@ -145,7 +147,7 @@ char skip_comment()
 
 	c = get_char();
 
-	if(c == ' '){
+	if(c == ' ' || c == '\n' || c == '\0'){
 		c = skip_blanks();
 	}if(c == '{'){
 		return skip_comment();
@@ -157,7 +159,6 @@ char skip_comment()
 struct Token get_word(char c)
 {
 	struct Token token;
-	union LiteralValue toLower;
 	TokenCode code;
 	int i = 1;
 
@@ -165,15 +166,15 @@ struct Token get_word(char c)
 	token.literalValue.valString[0] = c;
 	while(char_table[peek_char()] == LETTER || char_table[peek_char()] == NUMBER){
 		c = get_char();
-		token.literalValue.valString[i] = toLower.valString[i] = c;
+		token.literalValue.valString[i] = c;
 		i++;
 	}
 	while(i < MAX_TOKEN_STRING_LENGTH){
-		token.literalValue.valString[i] = toLower.valString[i] = '\0';
+		token.literalValue.valString[i] = '\0';
 		i++;
 	}
 
-	downshift_word(toLower.valString);
+	downshift_word(token.literalValue.valString);
 	code = is_reserved_word(token.literalValue.valString);
 	token.tokenCode = (code == NO_TOKEN)? IDENTIFIER : code;
 
@@ -185,14 +186,15 @@ struct Token get_number(char c)
 	struct Token token;
 	BOOLEAN isReal = FALSE;
 	int i = 1;
+	
 
 	token.tokenCode = NUMBER;
 	token.literalValue.valString[0] = c;
 
-	while(char_table[peek_char()] == NUMBER || c == '.' || c == 'e'){
+	while(char_table[peek_char()] == DIGIT || peek_char() == '.' || peek_char() == 'e'|| peek_char() == '-'){
 		c = get_char();
 		token.literalValue.valString[i] = c;
-		isReal = (c == '.' || c == 'e')? TRUE : FALSE;
+		isReal = (c == '.' || c == 'e' || c == '-')? TRUE : isReal;
 		i++;
 	}
 
@@ -285,7 +287,7 @@ TokenCode is_reserved_word(char* str)
 	strPtr = rw_table[strLength-2][i].string;
 	while(strPtr != NULL){
 		if(strncmp(str, strPtr, strLength) == 0){
-			return rw_table[i][strLength-2].token_code;
+			return rw_table[strLength-2][i].token_code;
 		}
 		i++;
 		strPtr = rw_table[strLength-2][i].string;

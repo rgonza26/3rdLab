@@ -3,7 +3,8 @@
 //  Lab3
 //
 //  Created by Bryce Holton.
-//  Copyright (c) 2014 Bryce Holton. All rights reserved.
+//  Copyright (c) 2014 Bryce
+//	Holton. All rights reserved.
 */
 
 #pragma warning(disable: 4996)
@@ -35,6 +36,14 @@ int main(int argc, const char* argv[])
     while (strncmp(token->literalValue.valString, ".", 1) != 0);
 
     quit_scanner(source_file, token_list);
+
+
+	/*==================================*/
+	printf("DONE");
+	getchar();
+	/*==================================*/
+
+
     return 0;
 }
 
