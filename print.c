@@ -53,11 +53,11 @@ void print_line(char line[], char source_name_to_print[], char date_to_print[])
 void print_token(struct Token *token)
 {
 	if(token->literalType == STRING_LIT){
-		printf("\t>> %s\t%s\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valString);
+		printf("\t>> %s\t\t%s\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valString);
 	}else if(token->literalType == INTEGER_LIT){
-		printf("\t>> %s\t%d\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valInt);
+		printf("\t>> %s\t\t%d\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valInt);
 	}else if(token->literalType == REAL_LIT){
-		printf("\t>> %s\t%s\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valString);
+		printf("\t>> %s\t\t%s\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valString);
 	}else{
 		printf("\n\n\tERROR: Token->literalType INVALID\n\n");
 		getchar();

@@ -58,6 +58,8 @@ void init_scanner(FILE *source_file, char source_name[], char date[])
 	}
 	char_table[95] = LETTER;	/* _underscore_	*/
 	char_table[39] = QUOTE;
+
+	get_source_line(line_buffer);
 }
 
 BOOLEAN get_source_line(char source_buffer[])
@@ -110,7 +112,7 @@ char get_char()
 	char c;
 	if(*ch == EOF){
 		return EOF;
-	}else if((*ch = '\n')){
+	}else if((*ch == '\n')){
 		get_source_line(line_buffer);
 		ch = line_buffer;
 	}
@@ -229,17 +231,34 @@ struct Token get_string(char c)
 
 struct Token get_special(char c)
 {
-	struct Token token;
+	struct Token tokenOneChar, tokenTwoChar, tokenFinal;
+	TokenCode codeOneChar, codeTwoChar, codeFinal;
 
-	token.literalType = STRING_LIT;
+	tokenOneChar.literalType = STRING_LIT;
+	tokenTwoChar.literalType = STRING_LIT;
 
-	token.literalValue.valString[0] = c;
-	token.literalValue.valString[1] = (char_table[peek_char()] == SPECIAL)? get_char() : '\0';
-	token.literalValue.valString[2] = '\0';
 
-	token.tokenCode = is_reserved_word(token.literalValue.valString);
+	tokenOneChar.literalValue.valString[0] = c;
+	tokenOneChar.literalValue.valString[1] = '\0';
 
-	return token;
+	tokenTwoChar.literalValue.valString[0] = c;
+	tokenTwoChar.literalValue.valString[1] = peek_char();
+	tokenTwoChar.literalValue.valString[2] = '\0';
+
+	codeOneChar = is_reserved_word(tokenOneChar.literalValue.valString);
+	codeTwoChar = is_reserved_word(tokenTwoChar.literalValue.valString);
+
+	if(codeTwoChar != NO_TOKEN){
+		get_char();
+		codeFinal = codeTwoChar;
+		tokenFinal = tokenTwoChar;
+	}else{
+		codeFinal = codeOneChar;
+		tokenFinal = tokenOneChar;
+	}
+	tokenFinal.tokenCode = codeFinal;
+
+	return tokenFinal;
 }
 
 void downshift_word(char* str)
