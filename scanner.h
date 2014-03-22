@@ -44,7 +44,7 @@ static char src_name[MAX_FILE_NAME_LENGTH];
 static char todays_date[DATE_STRING_LENGTH];
 static CharCode char_table[256];
 
-static char* ch;
-static char line_buffer[MAX_SOURCE_LINE_LENGTH];
+char* ch;
+char line_buffer[MAX_SOURCE_LINE_LENGTH];
 
 #endif

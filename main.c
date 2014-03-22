@@ -22,7 +22,7 @@ int main(int argc, const char* argv[])
     char source_name[MAX_FILE_NAME_LENGTH];
     char date[DATE_STRING_LENGTH];
     FILE *source_file;
-	ch = line_buffer;
+	ch = &line_buffer;
 	source_file = init_lister(argv[1], source_name, date);
     init_scanner(source_file, source_name, date);
 
@@ -41,8 +41,12 @@ int main(int argc, const char* argv[])
 void add_token_to_list(struct Token *list, struct Token *new_token)
 {
     /*Add new_token to the list knowing that list is a linked list. */
-	new_token->next = NULL;
-	list->next = new_token;
+	if(list == NULL){
+		list = new_token;
+	}else{
+		new_token->next = NULL;
+		list->next = new_token;
+	}
 }
 
 void quit_scanner(FILE *src_file, struct Token *list)

@@ -79,7 +79,7 @@ struct Token* get_token()
 {
 	struct Token newToken;
     struct Token* retToken;
-    char c;
+    char c = '\0';
     retToken = (struct Token*)malloc(sizeof(struct Token));
 
 	skip_blanks();
@@ -244,13 +244,15 @@ struct Token get_special(char c)
 
 void downshift_word(char* str)
 {
+	int shamt = 32;
 	char* ptr = str;
 
-	while(*ptr!='\0')
-		{
-		*ptr= tolower(*ptr);
+	while(*ptr!='\0'){
+		if(*ptr >= 65 && *ptr <= 90){
+			*ptr = *ptr + shamt;
 		}
 		ptr++;
+	}
 }
 
 TokenCode is_reserved_word(char* str)
