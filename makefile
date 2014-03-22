@@ -1,6 +1,11 @@
-make: main.c scanner.c print.c
-	gcc -o main.o main.c
-	gcc -o scanner.o scanner.c
-	gcc -o print.o print.c
-	gcc -o lab3 main.o scanner.o print.o
+lister: main.o print.o scanner.o
+	gcc main.o print.o scanner.o -o lister
 	rm *.o
+
+main.o: main.c scanner.h print.h common.h
+print.o: print.c print.h common.h	
+scanner.o: scanner.c scanner.h common.h
+clean:
+	rm -f $(OBJECTS)
+	rm -f *.d
+	rm -f $(TARGET)
