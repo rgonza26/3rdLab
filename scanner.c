@@ -99,7 +99,11 @@ char get_char()
 	char c;
 	if(*ch == EOF){
 		return EOF;
+<<<<<<< HEAD
 	}else if((*ch = '\n')){
+=======
+	}else if(*ch = '\n'){
+>>>>>>> FETCH_HEAD
 		get_source_line(line_buffer);
 		ch = line_buffer;
 	}
@@ -247,7 +251,11 @@ void downshift_word(char* str)
 TokenCode is_reserved_word(char* str)
 {
 	char* strPtr;
+<<<<<<< HEAD
 	long strLength;
+=======
+	int strLength;
+>>>>>>> FETCH_HEAD
 	int i = 0;
 	strLength = strlen(str);
 

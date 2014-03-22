@@ -24,8 +24,14 @@ const char* const SYMBOL_STRINGS[] =
     "VAR","WHILE","WITH"
 };
 
+<<<<<<< HEAD
 void print_line(char line[], char source_name_to_print[], char date_to_print[]);
 void print_page_header(char source_name[], char date[]);
+=======
+
+void print_line(char line[], char source_name_to_print[], char date_to_print[]);
+static void print_page_header(char source_name[], char date[]);
+>>>>>>> FETCH_HEAD
 void print_token(struct Token *token);
 
 
