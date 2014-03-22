@@ -82,7 +82,7 @@ struct Token* get_token()
     char c = '\0';
     retToken = (struct Token*)malloc(sizeof(struct Token));
 
-	skip_blanks();
+	c = skip_blanks();
 	if(peek_char() == '{'){
 		c = skip_comment();
 	}
@@ -263,14 +263,14 @@ TokenCode is_reserved_word(char* str)
 	strLength = strlen(str);
 
 	if(strLength < 2 || strLength > 9){return NO_TOKEN;}
-
-	do{
-		strPtr = rw_table[i][strLength-2].string;
+	strPtr = rw_table[strLength-2][i].string;
+	while(strPtr != NULL){
 		if(strncmp(str, strPtr, strLength) == 0){
 			return rw_table[i][strLength-2].token_code;
 		}
 		i++;
-	}while(strPtr != NULL);
+		strPtr = rw_table[strLength-2][i].string;
+	}
 
 	return NO_TOKEN;
 }
