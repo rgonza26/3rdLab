@@ -10,11 +10,7 @@
 
 void print_line(char line[], char source_name_to_print[], char date_to_print[])
 {
-<<<<<<< HEAD
     char save_ch = '\0';
-=======
-    char save_ch;
->>>>>>> FETCH_HEAD
     char *save_chp = NULL;
     static int line_count = MAX_LINES_PER_PAGE;
 
@@ -33,11 +29,7 @@ void print_line(char line[], char source_name_to_print[], char date_to_print[])
     }
 }
 
-<<<<<<< HEAD
  void print_page_header(char source_name[], char date[])
-=======
-static void print_page_header(char source_name[], char date[])
->>>>>>> FETCH_HEAD
 {
     static int page_number = 0;
 

@@ -18,11 +18,7 @@ FILE *init_lister(const char *name, char source_file_name[], char dte[]);
 int main(int argc, const char* argv[])
 {
     struct Token *token;
-<<<<<<< HEAD
     struct Token *token_list = NULL; /*This needs to be implemented as a linked list in scanner.h. */
-=======
-    struct Token *token_list; /*This needs to be implemented as a linked list in scanner.h. */
->>>>>>> FETCH_HEAD
     char source_name[MAX_FILE_NAME_LENGTH];
     char date[DATE_STRING_LENGTH];
     FILE *source_file;
