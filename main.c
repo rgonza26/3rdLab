@@ -6,46 +6,50 @@
 //  Copyright (c) 2014 Bryce Holton. All rights reserved.
 */
 
-#include <stdio.h>
+#pragma warning(disable: 4996)
 #include "common.h"
 #include "print.h"
 #include "scanner.h"
 
+void add_token_to_list(struct Token *list, struct Token *new_token);
+void quit_scanner(FILE *src_file, struct Token *list);
 FILE *init_lister(const char *name, char source_file_name[], char dte[]);
-void quit_scanner(FILE *src_file, Token *list);
-void add_token_to_list(Token *list, Token *new_token);
 
-int main(int argc, const char * argv[])
+int main(int argc, const char* argv[])
 {
-    Token *token;
-    Token *token_list; /*This needs to be implemented as a linked list in scanner.h. */
+    struct Token *token;
+    struct Token *token_list = NULL; /*This needs to be implemented as a linked list in scanner.h. */
     char source_name[MAX_FILE_NAME_LENGTH];
     char date[DATE_STRING_LENGTH];
-    FILE *source_file = init_lister(argv[1], source_name, date);
+    FILE *source_file;
+	ch = line_buffer;
+	source_file = init_lister(argv[1], source_name, date);
     init_scanner(source_file, source_name, date);
+
     do
     {
         token = get_token();
         add_token_to_list(token_list, token);
         print_token(token);
     }
-    while (strncmp(token->token_val.str, ".", 1) != 0);	/*What is the sentinal value that ends this loop? "." */
-    
+    while (strncmp(token->literalValue.valString, ".", 1) != 0);
+
     quit_scanner(source_file, token_list);
     return 0;
 }
 
-void add_token_to_list(Token *list, Token *new_token)
+void add_token_to_list(struct Token *list, struct Token *new_token)
 {
     /*Add new_token to the list knowing that list is a linked list. */
+	new_token->next = NULL;
 	list->next = new_token;
 }
 
-void quit_scanner(FILE *src_file, Token *list)
+void quit_scanner(FILE *src_file, struct Token *list)
 {
     /*write code to free all of the memory for the token list */
-	Token* ptr_lead;
-	Token* ptr_trail;
+	struct Token* ptr_lead;
+	struct Token* ptr_trail;
 
 	/* If list is empty */
 	if(list == NULL){
