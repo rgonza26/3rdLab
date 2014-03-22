@@ -184,7 +184,7 @@ struct Token get_number(char c)
 {
 	struct Token token;
 	BOOLEAN isReal = FALSE;
-	int i = 0;
+	int i = 1;
 
 	token.tokenCode = NUMBER;
 	token.literalValue.valString[0] = c;
