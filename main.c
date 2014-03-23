@@ -37,7 +37,6 @@ int main(int argc, const char* argv[])
 
     quit_scanner(source_file, token_list);
 
-	getchar();
     return 0;
 }
 
