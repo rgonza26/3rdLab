@@ -134,7 +134,7 @@ char skip_blanks()
 	char c;
 	do{
 		c = get_char();
-	}while(c == ' ' || c == '\n' || c == '\0' || c == '\t');
+	}while(c == ' ' || c == '\n' || c == '\0' || c == '\t'|| c == '\r');
 	return c;
 }
 
