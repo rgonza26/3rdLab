@@ -46,7 +46,7 @@ void print_line(char line[], char source_name_to_print[], char date_to_print[])
 {
     static int page_number = 0;
 
-    putchar(FORM_FEED_CHAR);
+    putchar('\f');
     printf("Page    %d  %s  %s\n\n", ++page_number, source_name, date);
 }
 

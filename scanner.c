@@ -12,15 +12,16 @@
 
 #include "scanner.h"
 
-const struct RwStruct rw_table[9][10] = {
-    /*[0]len2*/{{"do",DO},{"if",IF},{"in",IN},{"of",OF},{"or",OR},{"to",TO},{NULL,NO_TOKEN}},
-    /*[1]len3*/{{"and",AND},{"div",DIV},{"end",END},{"for",FOR},{"mod",MOD},{"nil",NIL},{"not",NOT},{"set",SET},{"var",VAR},{NULL,NO_TOKEN}},
-    /*[2]len4*/{{"case",CASE},{"else",ELSE},{"file",FFILE},{"goto",GOTO},{"then",THEN},{"type",TYPE},{"with",WITH},{NULL,NO_TOKEN}},
-    /*[3]len5*/{{"array",ARRAY},{"begin",BEGIN},{"const",CONST},{"label",LABEL},{"until",UNTIL},{"while",WHILE},{NULL,NO_TOKEN}},
-    /*[4]len6*/{{"downto",DOWNTO}, {"packed",PACKED},{"record",RECORD}, {"repeat",REPEAT},{NULL,NO_TOKEN}},
-    /*[5]len7*/{{"program", PROGRAM},{NULL,NO_TOKEN}},
-    /*[6]len8*/{{"function", FUNCTION},{NULL,NO_TOKEN}},
-    /*[7]len9*/{{"procedure", PROCEDURE},{NULL,NO_TOKEN}}
+const struct RwStruct rw_table[9][15] = {
+	/*[0]len1*/{{"^",UPARROW},{"*",STAR},{"(",LPAREN},{")",RPAREN},{"-",MINUS},{"[",LBRACKET},{"]",RBRACKET},{":",COLON},{";",SEMICOLON},{"<",LT},{">",GT},{",",COMMA},{".",PERIOD},{"/",SLASH},{NULL,NO_TOKEN}},
+	/*[1]len2*/{{"do",DO},{"if",IF},{"in",IN},{"of",OF},{"or",OR},{"to",TO},{":=",COLONEQUAL},{"<=",LE},{">=",GE},{"<>",NE},{"..",DOTDOT},{NULL,NO_TOKEN}},
+    /*[2]len3*/{{"and",AND},{"div",DIV},{"end",END},{"for",FOR},{"mod",MOD},{"nil",NIL},{"not",NOT},{"set",SET},{"var",VAR},{NULL,NO_TOKEN}},
+    /*[3]len4*/{{"case",CASE},{"else",ELSE},{"file",FFILE},{"goto",GOTO},{"then",THEN},{"type",TYPE},{"with",WITH},{NULL,NO_TOKEN}},
+    /*[4]len5*/{{"array",ARRAY},{"begin",BEGIN},{"const",CONST},{"label",LABEL},{"until",UNTIL},{"while",WHILE},{NULL,NO_TOKEN}},
+    /*[5]len6*/{{"downto",DOWNTO}, {"packed",PACKED},{"record",RECORD}, {"repeat",REPEAT},{NULL,NO_TOKEN}},
+    /*[6]len7*/{{"program", PROGRAM},{NULL,NO_TOKEN}},
+    /*[7]len8*/{{"function", FUNCTION},{NULL,NO_TOKEN}},
+    /*[8]len9*/{{"procedure", PROCEDURE},{NULL,NO_TOKEN}}
 };
 
 void init_scanner(FILE *source_file, char source_name[], char date[])
@@ -283,14 +284,14 @@ TokenCode is_reserved_word(char* str)
 	int i = 0;
 	strLength = strlen(str);
 
-	if(strLength < 2 || strLength > 9){return NO_TOKEN;}
-	strPtr = rw_table[strLength-2][i].string;
+	if(strLength > 9){return NO_TOKEN;}
+	strPtr = rw_table[strLength-1][i].string;
 	while(strPtr != NULL){
 		if(strncmp(str, strPtr, strLength) == 0){
-			return rw_table[strLength-2][i].token_code;
+			return rw_table[strLength-1][i].token_code;
 		}
 		i++;
-		strPtr = rw_table[strLength-2][i].string;
+		strPtr = rw_table[strLength-1][i].string;
 	}
 
 	return NO_TOKEN;
