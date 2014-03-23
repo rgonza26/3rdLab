@@ -53,8 +53,8 @@ void print_line(char line[], char source_name_to_print[], char date_to_print[])
 void print_token(struct Token *token)
 {
 	if(token->literalType == STRING_LIT){
-		if(token->tokenCode != IDENTIFIER){
-			printf("\t>> %s\t\t%s\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valString);
+		if(strlen(SYMBOL_STRINGS[token->tokenCode]) <= 4){
+			printf("\t>> %s\t\t\t%s\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valString);
 		}else{
 			printf("\t>> %s\t\t%s\n", SYMBOL_STRINGS[token->tokenCode], token->literalValue.valString);
 		}
