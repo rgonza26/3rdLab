@@ -115,7 +115,7 @@ char get_char()
 	char c;
 	if(*ch == EOF){
 		return EOF;
-	}else if(*ch == '\n' || *ch == '\0'){
+	}else if(*ch == '\n' || *ch == '\0' || *ch == '\r'){
 		get_source_line(line_buffer);
 		ch = &line_buffer;
 	}
