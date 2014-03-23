@@ -13,7 +13,7 @@
 
 void print_line(char line[], char source_name_to_print[], char date_to_print[]);
 void print_page_header(char source_name[], char date[]);
-void print_token(struct Token *token);
+void print_token(struct Token *token, char source_name[], char date[]);
 
 
 #endif

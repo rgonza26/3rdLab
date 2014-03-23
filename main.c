@@ -31,12 +31,13 @@ int main(int argc, const char* argv[])
     {
         token = get_token();
         add_token_to_list(token_list, token);
-        print_token(token);
+        print_token(token, source_name, date);
     }
     while (strncmp(token->literalValue.valString, ".", 1) != 0);
 
     quit_scanner(source_file, token_list);
 
+	getchar();
     return 0;
 }
 
